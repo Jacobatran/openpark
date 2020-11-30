@@ -1,0 +1,693 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to Open Park</title>
+    <meta name="description" content="Open Park" />
+
+    <!-- LIBS INSTALLATION -->
+    <!--  aframe v1.3    -->
+    <script src="https://aframe.io/releases/1.0.3/aframe.min.js"></script>
+    <!--   NAF & Socket.io   -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.slim.js"></script>
+    <script src="https://unpkg.com/networked-aframe@^0.7.1/dist/networked-aframe.min.js"></script>
+    <!-- extras for animation mixer -->
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+    <!-- environment component -->
+    <script src="https://unpkg.com/aframe-environment-component@1.1.0/dist/aframe-environment-component.min.js"></script>
+    <!--    NAF Multi Players -->
+    <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
+    <script src="/js/spawn-in-circle.component.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@^4.0.0/dist/aframe-event-set-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-animation-component@4.0.0/dist/aframe-animation-component.min.js"></script>
+
+    <!-- Video Playback     -->
+    <script>
+      AFRAME.registerComponent("play-pause", {
+        init: function() {
+          var myVideo = document.querySelector("#scott");
+          var videoControls = document.querySelector("#videoControls");
+          this.el.addEventListener("click", function() {
+            if (myVideo.paused) {
+              myVideo.play();
+              videoControls.setAttribute("src", "#pause");
+            } else {
+              myVideo.pause();
+              videoControls.setAttribute("src", "#play");
+            }
+          });
+        }
+      });
+    </script>
+
+    <!--      <script>
+      AFRAME.registerComponent("start-stop", {
+        init: function() {
+          var myPython = document.querySelector("#python");
+          var pythonControls = document.querySelector("#pythonControls");
+          this.el.addEventListener("click", function() {
+            if (myPython.paused) {
+              myPython.start();
+              pythonControls.setAttribute("src", "#pausePython");
+            } else {
+              myPython.stop();
+              pythonControls.setAttribute("src", "#playPython");
+            }
+          });
+        }
+      });
+    </script> -->
+
+    <!--     <script>
+    document.querySelection("#python")
+      document.addEventListener("mouseenter", e => {
+        location.href = "https://youtu.be/702I1sy4Ie0";
+      });
+    </script>
+     -->
+
+    <!--  Sound Playback    -->
+    <script>
+      AFRAME.registerComponent("play", {
+        init: function() {
+          var myEl = document.querySelector("#usher");
+          this.el.addEventListener("click", function() {
+            myEl.components.sound.playSound();
+          });
+        }
+      });
+      AFRAME.registerComponent("stop", {
+        init: function() {
+          var myEl = document.querySelector("#usher");
+          this.el.addEventListener("click", function() {
+            myEl.components.sound.stopSound();
+          });
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <!-- SCENE START HERE     -->
+    <!--   NAF component   -->
+    <a-scene
+      networked-scene="
+      room: basic;
+      debug: true;"
+    >
+      <!--    Environment    -->
+      <a-entity
+        id="environment"
+        environment="preset: goaland; groundColor: #21291A; active: true; skyType: gradient; 
+    skyColor: #14645f; horizonColor: #a3dab8; lighting: none; shadow: true; 
+    lightPosition: 0.1 4 0.56; fog: 0.25; ground: noise; groundYScale: 0.81; 
+    groundTexture: walkernoise; groundColor2: #115E62; dressing: mushrooms; 
+    dressingAmount: 600; dressingColor: #a9313d; dressingScale: 7; 
+    dressingVariance: 10 10 5; dressingUniformScale: false; 
+    dressingOnPlayArea: 0.015; grid: none; 
+    gridColor: #239893"
+        visible=""
+        position="0 -0.056 -7.37"
+      >
+        <a-entity
+          class="environment"
+          position="0 50 0"
+          light="type: hemisphere; color: #89b1af; 
+    intensity: 0.6; groundColor: #21291A"
+          visible="false"
+        ></a-entity>
+        <a-entity
+          class="environment"
+          position="0.1 4 0.56"
+          light="intensity: 0.6; castShadow: true; shadowCameraLeft: -10; 
+    shadowCameraBottom: -10; shadowCameraRight: 10; shadowCameraTop: 10"
+          visible="false"
+        >
+        </a-entity
+        ><a-entity
+          rotation="-90 0 0"
+          class="environmentGround environment"
+          visible=""
+          scale="1 1 0.81"
+          shadow="cast: false"
+        ></a-entity
+        ><a-entity class="environmentDressing environment" visible=""></a-entity
+        ><a-sky
+          radius="200"
+          theta-length="110"
+          class="environment"
+          visible=""
+          geometry=""
+          material="shader: gradientshader; topColor: #14645f; bottomColor: #a3dab8; npot: false; side: front"
+        >
+        </a-sky>
+      </a-entity>
+
+      <!--   Spawn Point & Camera Movement Speed    -->
+      <a-entity
+        camera
+        look-controls
+        wasd-controls="acceleration:250"
+        position="0 1.8 10"
+      >
+        <a-cursor></a-cursor>
+      </a-entity>
+
+      <!--   Night Sky Box    -->
+      <a-sky
+        src="#sky"
+        rotation="140 -90 0"
+        material=""
+        geometry=""
+        scale="0.30971 0.30971 0.30971"
+      ></a-sky>
+
+      <!--  START ASSET MANAGEMENT SYSTEM     -->
+      <a-assets>
+        <!--      Travis Scott Music Video Loading    -->
+        <img
+          id="play"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fplay.png?v=1605388606280"
+        />
+        <img
+          id="pause"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fpause.png?v=1605388606280"
+        />
+        <video
+          id="scott"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fscott.mp4?v=1605389109204"
+          loop="true"
+        ></video>
+
+        <!--      Python Video Loading    -->
+
+        <!--         <img
+          id="playPython"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FplayPython.png?v=1606620936529"
+        />
+        <img
+          id="pausePython"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FpausePython.png?v=1606621059651"
+        />
+        
+        <video
+          id="python"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FCOVID19Turtle.mp4?v=1606615970918"
+          loop="true"
+        ></video> -->
+        <!--       /Video clip Loading   -->
+
+        <!--   artist statement       -->
+        <img
+          id="artist"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fposter.png?v=1605955275520"
+        />
+
+        <!--     covid white      -->
+        <img
+          id="covidwhite"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fcovidwhite.png?v=1606728870311"
+        />
+
+        <!--   burrberry       -->
+        <img
+          id="burrberry"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FBurrberry.png?v=1606253941755"
+        />
+
+        <!--   milkshake    -->
+        <img
+          id="milkshake"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FMilkshake.png?v=1606253941846"
+        />
+
+        <!--   bubbleyum    -->
+        <img
+          id="bubbleyum"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FBubbleYum.png?v=1606253941933"
+        />
+
+        <!--    christmas tree     -->
+        <a-entity
+          gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fchristmastree.glb?v=1605946133039"
+          position="-1.3995 3.59929 -25.20319"
+          rotation="0 -37.462 0"
+          scale="1.046 1.046 1.046"
+        ></a-entity>
+
+        <!--    spinning planet      -->
+        <a-asset-item
+          id="planet"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FspinPlanet.glb?v=1604753393705"
+        ></a-asset-item>
+        <!--     white tesla     -->
+        <a-asset-item
+          id="tesla"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Ftesla.glb?v=1604662493575"
+        ></a-asset-item>
+        <!--   t-rex       -->
+        <a-asset-item
+          id="trex"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fraptor.glb?v=1604710880916"
+        ></a-asset-item>
+
+        <audio
+          id="usher"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FUsher-yeahYeah.mp3?v=1604725752971;
+               autoplay: true"
+        ></audio>
+
+        <!--                 <img
+          id="grid"
+          src="https://img.gs/bbdkhfbzkk/stretch/https://i.imgur.com/25P1geh.png"
+          crossorigin="anonymous"
+        /> -->
+
+        <!--    Night Sky Img      -->
+        <img
+          id="sky"
+          src="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fskynight.png?v=1604642994006"
+          crossorigin="anonymous"
+        />
+
+        <!-- Avatar Template -->
+        <template id="avatar-template">
+          <a-entity class="avatar">
+            <a-sphere
+              class="head"
+              color="#5985ff"
+              scale="0.45 0.5 0.4"
+              random-color
+            ></a-sphere>
+            <a-entity class="face" position="0 0.05 0">
+              <a-sphere
+                class="eye"
+                color="#efefef"
+                position="0.16 0.1 -0.35"
+                scale="0.12 0.12 0.12"
+              >
+                <a-sphere
+                  class="pupil"
+                  color="#000"
+                  position="0 0 -1"
+                  scale="0.2 0.2 0.2"
+                ></a-sphere>
+              </a-sphere>
+              <a-sphere
+                class="eye"
+                color="#efefef"
+                position="-0.16 0.1 -0.35"
+                scale="0.12 0.12 0.12"
+              >
+                <a-sphere
+                  class="pupil"
+                  color="#000"
+                  position="0 0 -1"
+                  scale="0.2 0.2 0.2"
+                ></a-sphere>
+              </a-sphere>
+            </a-entity>
+          </a-entity>
+        </template>
+        <!-- /Avatar Templates -->
+      </a-assets>
+      <!--    /Asset Management System    -->
+
+      <!--       <a-entity gltf-model="#arrowfloor" position="-8.9 0.21195 10"></a-entity> -->
+
+      <!--    Video 16:9    -->
+      <a-video
+        src="#scott"
+        width="8"
+        height="4.5"
+        position="5.48322 3 10.11644"
+        material=""
+        geometry=""
+        rotation="0 31.689000000000004 0"
+      >
+        <!-- Play/Pause PNG -->
+        <a-image
+          id="videoControls"
+          src="#play"
+          position="0 -2.71 0"
+          scale="1 1 1"
+          play-pause=""
+          material=""
+          geometry=""
+        >
+        </a-image>
+      </a-video>
+
+      <!--    Python Video 16:9    -->
+      <!--       <a-video
+        id="top"
+        src="#python"
+        width="8"
+        height="4.5"
+        position="-55.55081 3 48.85512"
+        material=""
+        geometry=""
+        rotation="0 127.76443169401739 0"
+        scale="0.613 0.613 0.613"
+      >
+       
+        <a-image
+          id="pythonControls"
+          src="#playPython"
+          position="0 -2.51 0"
+          scale="0.5 0.5 1"
+          play-pause=""
+          material=""
+          geometry=""
+        >
+        </a-image>
+      </a-video> -->
+
+      <a-image
+        id="covid"
+        src="#covidwhite"
+        position="-55.55081 3 48.85512"
+        material=""
+        geometry=""
+        scale="5.816 4.816 4.816"
+        rotation="0 127.76443169401739 0"
+      >
+      </a-image>
+
+      <!--     ENTITY START HERE  -->
+
+      <!--   artist statement     -->
+      <a-image
+        src="#artist"
+        position="-13.26695 1.5 -0.05028"
+        scale="3 3 1"
+        material=""
+        geometry=""
+        rotation="0 78.354 0.001"
+      >
+      </a-image>
+
+      <!--  width="1"
+        height="0.75"      -->
+
+      <!--   christmas tree     -->
+      <a-entity
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fchristmastree.glb?v=1605946133039"
+        position="2.34047 3.24039 -25.20319"
+        rotation="0 -37.462 0"
+      ></a-entity>
+
+      <!-- white tesla -->
+      <a-entity
+        gltf-model="#tesla"
+        position="0.43861 0.69148 16.01743"
+        rotation="0 58.251 0"
+        scale="0.01253 0.01253 0.01274"
+      ></a-entity>
+
+      <!-- fire camp  -->
+      <a-entity
+        id="firecamp"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Ffirecamp.glb?v=1604621477806"
+        position="0.502 0.01 -0.73533"
+        scale="1.337 1.337 1.337"
+        animation-mixer="clip: fire armAction"
+      >
+      </a-entity>
+      <!--    wooden shed    -->
+      <a-entity
+        id="woodenshed"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FwoodenShed.glb?v=1604659966874"
+        position="-1.40054 0.4 -13.07578"
+        rotation="0 13.91370709695691 0"
+        scale="1 1.01 1.01"
+      ></a-entity>
+
+      <!-- float bot -->
+      <a-entity
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FfloatBot.glb?v=1604660301433"
+        position="-1.837 0.818 -1.794"
+        scale="0.013 0.01335 0.01335"
+        animation-mixer="clip: Take 001"
+        rotation="0 49.373 0"
+        id="robot"
+      >
+      </a-entity>
+
+      <!-- moon dog walk -->
+      <a-entity
+        id="moondogWalk"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FmoonDog.glb?v=1604660896761"
+        position="3.620936414685165 -0.13182731140998424 -7.1771130080941425"
+        scale="0.046 0.05 0.046"
+        animation-mixer="clip: WalkCycle;"
+        animation="property: position; to: 5 0 0; dur: 10000; easing: linear; loop: true"
+      >
+      </a-entity>
+
+      <!-- moon dog sit -->
+      <a-entity
+        id="moondogSit"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FmoonDog.glb?v=1604660896761"
+        position="-5.945 -0.005 -6.694"
+        scale="0.046 0.05 0.046"
+        animation-mixer="clip: SitScratchEar;"
+        rotation="0 35.26 0"
+      >
+      </a-entity>
+
+      <!-- neon speaker -->
+
+      <a-entity
+        id="speaker-text"
+        text="value: \nHi There!\nClick on the speaker to play music and join the dance floor.
+			  			\nTo stop the music refresh the page :-) enjoy; align: center; wrapCount: 20; width: 1"
+        position="-16.01414 1.75967 -12.89115"
+        scale="2.369 2.369 2.379"
+      ></a-entity>
+
+      <a-entity
+        id="neonSpeaker"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fneonspeaker.glb?v=1605387188308"
+        position="-16.307 -0.03613 -17.0323"
+        rotation="0 74.63692014051182 0"
+        scale="1.14 1.14 1.14"
+        sound="src: #usher;
+                on: click;
+               volume: 1;
+               refDistance: 2;
+               rolloffFactor: 2"
+      ></a-entity>
+
+      <!-- Dance Boxes -->
+      <a-entity
+        id="danceBoxes"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FdanceBox.glb?v=1604709235438"
+        position="-14.36382 -0.03613 -14.45946"
+        rotation="0 51.51177057123666 0"
+        scale="0.09186 0.09186 0.09349"
+        animation-mixer="clip: Take 001"
+      ></a-entity>
+      <a-entity
+        id="danceBoxes2"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FdanceBox.glb?v=1604709235438"
+        position="-13.25945 -0.03613 -12.22508"
+        rotation="0 142.63383239325253 0"
+        scale="0.09186 0.09186 0.09349"
+        animation-mixer="clip: Take 001"
+      ></a-entity>
+
+      <!-- rocks -->
+      <a-entity
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Frock.glb?v=1604709883154"
+        position="-12.27457 0.04518 5.46301"
+        scale="1.90392 1.90392 1.82324"
+        rotation="0 -38.725 0"
+        id="rock"
+      ></a-entity>
+
+      <a-entity
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Frock.glb?v=1604709883154"
+        position="-15.78881 0.04518 7.81225"
+        scale="2.99747 2.99747 2.87045"
+        rotation="0 109.43379295439698 0"
+        id="rock-2"
+      ></a-entity>
+
+      <!--    whale    -->
+      <a-entity
+        id="whale"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fwhale.glb?v=1604664448109"
+        position="0.5568896410980742 17.6185300897437 -2.6758894841096454"
+        animation="property: position; to: -30 10 -10; dur: 90000; easing: linear; loop: true"
+        animation-mixer="clip: Swim"
+      ></a-entity>
+
+      <!--    spin planet    -->
+      <a-entity
+        gltf-model="#planet"
+        position="7.608 47.14 -83.197"
+        animation-mixer="clip: Take 001"
+        scale="0.706 0.706 0.706"
+      ></a-entity>
+
+      <!-- t-rex -->
+      <a-entity
+        gltf-model="#trex"
+        position="12.11014 0.02641 -6.04194"
+        rotation="0 -62.611681936306105 0"
+        scale="0.37267 0.37267 0.37927"
+        animation-mixer="clip: Take 001;"
+        animation="property: position; to: -100 0 75; dur: 15000; easing: linear; loop: true"
+      ></a-entity>
+
+      <!-- can soup -->
+      <a-entity
+        id="canSoup"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2FcanSoup.glb?v=1604712563119"
+        position="14.23108 0.1881 -13.13273"
+        scale="0.03113 0.03113 0.03113"
+        rotation="0 -89.065 0.01"
+        animation-mixer="clip: Take 001"
+      >
+      </a-entity>
+
+      <!-- pennywise -->
+      <a-entity
+        id="pennywise"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fpennyclown.glb?v=1604715183665"
+        position="-22.93487 -0.06654 33.23229"
+        rotation="-0.006875493541569879 165.86898985919282 -0.007448451336700701"
+        scale="2.40942 2.40942 2.3394"
+      ></a-entity>
+
+      <!-- Random Spawn Point -->
+      <a-entity
+        id="player"
+        camera
+        networked="template:#avatar-template;attachTemplateToLocal:false;"
+        position="0 1.6 0"
+        spawn-in-circle="radius:3"
+        wasd-controls
+        look-controls
+      >
+        <a-sphere class="head" visible="false" random-color></a-sphere>
+      </a-entity>
+
+      <!--    Lights Source  -->
+      <a-entity
+        light="color: #ccccff; intensity: 1; type: ambient;"
+        visible=""
+      ></a-entity>
+      <a-entity
+        light="color: #ffaaff; intensity: 1.5"
+        position="5 5 5"
+      ></a-entity>
+      <!--     ENTITY END HERE  -->
+
+      <!--   Project Final Art 107     -->
+
+      <!--   burrberry     -->
+      <a-image
+        id="blueberry"
+        src="#burrberry"
+        position="-52.31207 2.86131 54.17082"
+        material=""
+        geometry=""
+        scale="3.816 3.816 3.816"
+      >
+      </a-image>
+
+      <!--   milkshake    -->
+      <a-image
+        id="pinkshake"
+        src="#milkshake"
+        position="-43.62113 2.57999 47.70266"
+        material=""
+        geometry=""
+        scale="3.816 3.816 3.816"
+        rotation="0 -0.119 0"
+      >
+      </a-image>
+
+      <!--    bubbleyum    -->
+      <a-image
+        src="#bubbleyum"
+        position="-55.42307 2.69044 42.42456"
+        material=""
+        geometry=""
+        scale="3.816 3.816 3.816"
+        rotation="0 65.779 0"
+      >
+      </a-image>
+
+      <!--   cupcake   -->
+      <a-entity
+        id="cupcake"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Fcupcake.glb?v=1605517824771"
+        position="-57.08888 0.32085 63.10444"
+        scale="1.03162 1.03162 1.03162"
+      ></a-entity>
+
+      <!--    emojis    -->
+      <a-entity
+        id="emojis"
+        gltf-model="https://cdn.glitch.com/81d3312c-32a8-42f7-a74d-a452e2b85225%2Femojis.glb?v=1605518233685"
+        position="-48.80585 -1.27752 38.89446"
+        scale="0.007 0.007 0.007"
+        rotation="0 58.827868657262144 0"
+      ></a-entity>
+
+      <!--    Floor Arrows    -->
+      <a-plane
+        id="arrow-pathway"
+        position="-8.9 0.21195 10"
+        rotation="-89.99963750135457 127.2957522176004 0"
+        width="0"
+        height="4"
+        color="#fdff00"
+        shadow=""
+        material=""
+        geometry="primitive: triangle"
+        animation="property: position; to: -14 0 14; dur: 3000; easing: linear; loop: true"
+      ></a-plane>
+
+      <a-plane
+        id="arrow-pathway2"
+        position="-13.07549 0.07775 13.27773"
+        rotation="-89.99963750135457 127.2957522176004 0"
+        width="0"
+        height="4"
+        color="#fdff00"
+        shadow=""
+        material=""
+        geometry="primitive: triangle"
+        animation="property: position; to: -16 0 16; dur: 2000; easing: linear; loop: true"
+        scale="0.719 0.719 0.719"
+      ></a-plane>
+    </a-scene>
+    <!-- SCENE END HERE     -->
+
+    <script>
+      // On mobile remove elements that are resource heavy
+      var isMobile = AFRAME.utils.device.isMobile();
+
+      if (isMobile) {
+        var particles = document.getElementById("particles");
+        particles.parentNode.removeChild(particles);
+      }
+
+      // Define custom schema for syncing avatar color, set by random-color
+      NAF.schemas.add({
+        template: "#avatar-template",
+        components: [
+          "position",
+          "rotation",
+          {
+            selector: ".head",
+            component: "material",
+            property: "color"
+          }
+        ]
+      });
+    </script>
+  </body>
+</html>
